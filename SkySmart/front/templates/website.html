@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SkySmart</title>
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
+
+<body>
+
+
+<div class="background"></div>
+
+
+
+<header>
+
+<div class="logo">
+SkySmart
+</div>
+
+</header>
+
+
+
+
+
+<main>
+
+
+<section class="hero">
+
+
+<h1>
+Smart flight search
+<br>
+made simple
+</h1>
+
+
+<p>
+Find the best flights by price, duration and comfort.
+</p>
+
+
+
+
+
+<form class="search-card" method="POST" action="/search">
+
+
+
+<div class="field autocomplete">
+
+
+<label>
+From
+</label>
+
+
+<input 
+id="from"
+placeholder="Search city"
+autocomplete="off"
+required>
+
+<input
+type="hidden"
+id="from-code"
+name="departure">
+
+
+<div class="suggestions" id="from-list"></div>
+
+
+</div>
+
+
+
+
+
+<div class="swap">
+⇄
+</div>
+
+
+
+
+
+<div class="field autocomplete">
+
+
+<label>
+To
+</label>
+
+
+<input 
+id="to"
+placeholder="Search city"
+autocomplete="off"
+required>
+
+<input
+type="hidden"
+id="to-code"
+name="arrival">
+
+
+<div class="suggestions" id="to-list"></div>
+
+
+</div>
+
+
+
+
+
+<div class="field">
+
+
+<label>
+Departure
+</label>
+
+
+<input
+name="date"
+type="date"
+min="2026-01-01"
+max="2030-12-31"
+required>
+
+
+</div>
+
+
+
+
+<button type="submit">
+
+Search
+
+</button>
+
+
+
+</form>
+<div class="ai-search">
+
+    <div class="chat-box collapsed" id="chat-box">
+
+        <!-- Collapsed / header -->
+        <div class="chat-collapsed-bar" id="chat-collapsed-bar">
+
+            <div class="chat-collapsed-text">
+                <span class="chat-icon">✈️</span>
+
+                <div>
+                    <strong>Search with SkySmart Assistant</strong>
+                    <span>
+                        Prefer a more natural way to search?
+                    </span>
+                </div>
+            </div>
+
+            <span class="chat-expand-icon">⌄</span>
+
+        </div>
+
+
+        <!-- Chat -->
+        <div class="chat-content">
+
+            <div class="chat-messages" id="chat-messages">
+
+                <div class="message bot">
+                    <div class="message-bubble">
+
+                        Hi! 👋
+                        <br><br>
+
+                        I'd be happy to help you find a flight.
+                        Where would you like to fly to?
+
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="chat-input-row">
+
+                <input
+                    type="text"
+                    id="chat-input"
+                    placeholder="Type your message..."
+                    autocomplete="off"
+                >
+
+                <div
+                    class="suggestions chat-suggestions"
+                    id="chat-list"
+                ></div>
+
+                <button
+                    type="button"
+                    id="chat-send"
+                >
+                    →
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+</section>
+
+
+
+
+
+
+{% if flights %}
+
+
+<section class="results" id="results-section">
+
+
+<h2>
+Flight results
+</h2>
+
+
+
+
+<div class="flight-list" id="flight-list">
+
+{% for flight in flights %}
+
+    <div class="flight-card">
+
+        <div class="flight-top">
+
+            <div class="airline">
+                <h3>
+                    {{ flight.flights[0].airline }}
+                </h3>
+
+                <p>
+                    {{ flight.flights[0].flight_number }}
+                </p>
+            </div>
+
+            <div class="price">
+                ${{ flight.price }}
+            </div>
+
+        </div>
+
+
+        <div class="route">
+
+            <div class="airport">
+
+                <strong>
+                    {{ flight.flights[0].departure_airport.city }}
+                </strong>
+
+                <span>
+                    {{ flight.flights[0].departure_airport.time }}
+                </span>
+
+            </div>
+
+
+            <div class="arrow">
+                →
+            </div>
+
+
+            <div class="airport">
+
+                <strong>
+                    {{ flight.flights[-1].arrival_airport.city }}
+                </strong>
+
+                <span>
+                    {{ flight.flights[-1].arrival_airport.time }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="info">
+
+            <span>
+                Duration:
+                {{ flight.total_duration }} min
+            </span>
+
+            <span>
+
+                {% if flight.flights|length == 1 %}
+
+                    Direct flight
+
+                {% else %}
+
+                    {{ flight.flights|length - 1 }} stops
+
+                {% endif %}
+
+            </span>
+
+        </div>
+
+
+        <div class="segments">
+
+            {% for segment in flight.flights %}
+
+                <p>
+                    {{ segment.airline }}
+                    {{ segment.flight_number }}
+                    |
+                    {{ segment.departure_airport.city }}
+                    →
+                    {{ segment.arrival_airport.city }}
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+
+        {% if flight.booking_token %}
+
+            <a
+                href="/booking?token={{ flight.booking_token }}&departure={{ departure }}&arrival={{ arrival }}&date={{ date }}"
+                target="_blank"
+                class="details-button"
+            >
+                Open flight →
+            </a>
+
+        {% endif %}
+
+    </div>
+
+{% endfor %}
+
+</div>
+
+
+</section>
+
+
+{% endif %}
+
+
+
+
+
+</main>
+
+
+
+
+
+<script>
+
+/* =========================
+   AUTOCOMPLETE
+========================= */
+
+function autocomplete(inputId, listId, codeInputId) {
+
+    const input =
+        document.getElementById(inputId);
+
+    const list =
+        document.getElementById(listId);
+
+    const codeInput =
+        document.getElementById(codeInputId);
+
+
+    input.addEventListener("input", () => {
+
+        const value =
+            input.value.trim();
+
+        // User changed the city manually.
+        // Previous airport selection is no longer valid.
+        codeInput.value = "";
+
+        list.innerHTML = "";
+
+
+        if (value.length < 2)
+            return;
+
+
+        fetch(
+            "/autocomplete?q=" +
+            encodeURIComponent(value)
+        )
+
+        .then(res => res.json())
+
+        .then(data => {
+
+            data.forEach(item => {
+
+                const div =
+                    document.createElement("div");
+
+                div.className =
+                    "suggestion";
+
+
+                div.innerHTML =
+                    `${item.city}, ${item.country}`;
+
+
+                div.onclick = () => {
+
+                    // Show city to the user.
+                    input.value =
+                        item.city;
+
+
+                    // Store all airports internally.
+                    codeInput.value =
+                        item.code;
+
+
+                    list.innerHTML =
+                        "";
+
+                };
+
+
+                list.appendChild(div);
+
+            });
+
+        });
+
+    });
+
+}
+
+
+autocomplete(
+    "from",
+    "from-list",
+    "from-code"
+);
+
+autocomplete(
+    "to",
+    "to-list",
+    "to-code"
+);
+
+
+
+document
+    .querySelector(".search-card")
+    .addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const fromCode =
+            document.getElementById("from-code").value;
+
+        const toCode =
+            document.getElementById("to-code").value;
+
+        const date =
+            document.querySelector(
+                '.search-card input[name="date"]'
+            ).value;
+
+
+        if (!fromCode || !toCode) {
+
+            alert(
+                "Please select a departure and destination from the suggestions."
+            );
+
+            return;
+
+        }
+
+
+        if (!date) {
+
+            alert(
+                "Please select a departure date."
+            );
+
+            return;
+
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/chat/search",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            departure: fromCode,
+                            arrival: toCode,
+                            date: date
+
+                        })
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (data.error) {
+
+                alert(data.error);
+
+                return;
+
+            }
+
+
+            renderFlights(data);
+
+
+            const results =
+                document.getElementById(
+                    "results-section"
+                );
+
+
+            if (results) {
+
+                results.scrollIntoView({
+                    behavior: "smooth"
+                });
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            alert(
+                "Sorry, something went wrong. Please try again."
+            );
+
+        }
+
+    });
+
+
+/* =========================
+   CHAT
+========================= */
+
+const chatBox =
+    document.getElementById("chat-box");
+
+const chatCollapsedBar =
+    document.getElementById("chat-collapsed-bar");
+
+const chatMessages =
+    document.getElementById("chat-messages");
+
+const chatInput =
+    document.getElementById("chat-input");
+
+const chatSend =
+    document.getElementById("chat-send");
+
+/* =========================
+   CHAT AUTOCOMPLETE
+========================= */
+
+const chatList =
+    document.getElementById("chat-list");
+
+let chatWaitingFor = "ask_destination";
+
+
+chatInput.addEventListener("input", () => {
+
+    const value =
+        chatInput.value.trim();
+
+
+    chatList.innerHTML = "";
+
+
+    /*
+     * Autocomplete is only available
+     * when the bot is asking for
+     * a destination or origin city.
+     */
+
+    if (
+        chatWaitingFor !== "ask_destination" &&
+        chatWaitingFor !== "ask_origin"
+    ) {
+        return;
+    }
+
+
+    if (value.length < 2)
+        return;
+
+
+    fetch(
+        "/autocomplete?q=" +
+        encodeURIComponent(value)
+    )
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        data.forEach(item => {
+
+            const div =
+                document.createElement("div");
+
+            div.className =
+                "suggestion";
+
+
+            div.innerHTML =
+                `${item.city}, ${item.country}`;
+
+
+            div.onclick = () => {
+
+                chatInput.value =
+                    item.city;
+
+                chatList.innerHTML =
+                    "";
+
+                chatInput.focus({
+                    preventScroll: true
+                });
+
+            };
+
+
+            chatList.appendChild(div);
+
+        });
+
+    })
+
+    .catch(error => {
+
+        console.error(
+            "Chat autocomplete error:",
+            error
+        );
+
+    });
+
+});
+
+
+let chatSearchFinished = false;
+
+let chatWasOpened = false;
+
+
+/* =========================
+   ADD MESSAGE
+========================= */
+
+function addMessage(text, type) {
+
+    const message =
+        document.createElement("div");
+
+    message.className =
+        "message " + type;
+
+
+    const bubble =
+        document.createElement("div");
+
+    bubble.className =
+        "message-bubble";
+
+    /*
+     * Convert line breaks to HTML.
+     */
+
+    bubble.innerHTML =
+        text.replace(/\n/g, "<br>");
+
+
+    message.appendChild(bubble);
+
+    chatMessages.appendChild(message);
+
+
+    chatMessages.scrollTop =
+        chatMessages.scrollHeight;
+
+}
+
+
+/* =========================
+   OPEN CHAT
+========================= */
+
+function openChat() {
+
+    chatBox.classList.remove(
+        "collapsed"
+    );
+
+    chatWasOpened = true;
+
+
+    /*
+     * Previous search was completed.
+     * Keep the old messages, but start
+     * a completely new conversation.
+     */
+
+    if (chatSearchFinished) {
+
+        addMessage(
+            "I'm here if you'd like to search for another flight! ✈️<br><br>" +
+            "Just tell me where you'd like to fly to.",
+            "bot"
+        );
+
+        chatSearchFinished = false;
+
+        chatWaitingFor = "ask_destination";
+
+        chatList.innerHTML = "";
+
+    }
+
+
+    chatInput.focus();
+
+}
+
+
+/* =========================
+   COLLAPSE CHAT
+========================= */
+
+function collapseChat() {
+
+    chatBox.classList.add(
+        "collapsed"
+    );
+
+}
+
+
+/* =========================
+   CLICK HEADER
+========================= */
+
+chatCollapsedBar.addEventListener(
+    "click",
+    function() {
+
+        if (
+            chatBox.classList.contains(
+                "collapsed"
+            )
+        ) {
+
+            openChat();
+
+        } else {
+
+            collapseChat();
+
+        }
+
+    }
+);
+
+
+/* =========================
+   INPUT FOCUS
+========================= */
+
+chatInput.addEventListener(
+    "focus",
+    function() {
+
+        chatBox.classList.remove(
+            "collapsed"
+        );
+
+    }
+);
+
+
+/* =========================
+   SEND MESSAGE
+========================= */
+
+async function sendChatMessage() {
+
+    const text =
+        chatInput.value.trim();
+
+
+    if (!text)
+        return;
+
+
+    addMessage(
+        text,
+        "user"
+    );
+
+
+    chatInput.value = "";
+
+    chatSend.disabled = true;
+
+
+    try {
+
+        const formData =
+            new FormData();
+
+        formData.append(
+            "query",
+            text
+        );
+
+
+        const response =
+            await fetch(
+                "/chat",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+        chatWaitingFor =
+            data.state.waiting_for;
+
+
+        if (data.reply) {
+
+            addMessage(
+                data.reply,
+                "bot"
+            );
+
+        }
+
+
+        /*
+         * We have all required information.
+         */
+
+        if (data.search) {
+
+            await searchFlights(
+                data.state
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        addMessage(
+            "Sorry, something went wrong. " +
+            "Please try again.",
+            "bot"
+        );
+
+    }
+
+    finally {
+
+        chatSend.disabled = false;
+
+        if (!chatSearchFinished) {
+            chatInput.focus();
+        }
+
+    }
+
+}
+
+
+/* =========================
+   ENTER
+========================= */
+
+chatInput.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            sendChatMessage();
+
+        }
+
+    }
+);
+
+
+/* =========================
+   SEND BUTTON
+========================= */
+
+chatSend.addEventListener(
+    "click",
+    sendChatMessage
+);
+
+
+/* =========================
+   SEARCH FLIGHTS
+========================= */
+
+async function searchFlights(state) {
+
+    if (
+        !state.origin ||
+        !state.destination ||
+        !state.departure_date
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/chat/search",
+                {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        departure:
+                            state.origin,
+
+                        arrival:
+                            state.destination,
+
+                        date:
+                            state.departure_date
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (data.error) {
+
+            addMessage(
+                "Hmm, I couldn't find any flights for that search. " +
+                "Let's try another date or route.",
+                "bot"
+            );
+
+            return;
+
+        }
+
+
+        renderFlights(data);
+
+
+        /*
+         * Search is successfully finished.
+         *
+         * The results are now rendered on the page.
+         * The current chat is therefore finished.
+         */
+
+        chatSearchFinished = true;
+
+        chatWaitingFor = "ask_destination";
+
+        chatList.innerHTML = "";
+
+        collapseChat();
+
+
+        /*
+         * Scroll to results.
+         */
+
+        const results =
+            document.getElementById(
+                "results-section"
+            );
+
+
+        if (results) {
+
+            results.scrollIntoView({
+                behavior: "smooth"
+            });
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        addMessage(
+            "Sorry, I couldn't load the flight results right now. " +
+            "Please try again in a moment.",
+            "bot"
+        );
+
+    }
+
+}
+
+
+/* =========================
+   RENDER FLIGHTS
+========================= */
+
+function renderFlights(data) {
+
+    let resultsSection =
+        document.getElementById(
+            "results-section"
+        );
+
+
+    /*
+     * Create results section
+     * if it doesn't exist yet.
+     */
+
+    if (!resultsSection) {
+
+        resultsSection =
+            document.createElement("section");
+
+        resultsSection.className =
+            "results";
+
+        resultsSection.id =
+            "results-section";
+
+
+        resultsSection.innerHTML = `
+            <h2>Flight results</h2>
+
+            <div
+                class="flight-list"
+                id="flight-list"
+            ></div>
+        `;
+
+
+        document
+            .querySelector("main")
+            .appendChild(resultsSection);
+
+    }
+
+
+    const flightList =
+        document.getElementById(
+            "flight-list"
+        );
+
+
+    flightList.innerHTML = "";
+
+
+    /*
+     * No flights
+     */
+
+    if (
+        !data.flights ||
+        data.flights.length === 0
+    ) {
+
+        flightList.innerHTML = `
+            <p>
+                I couldn't find any flights
+                for this route and date.
+            </p>
+        `;
+
+        return;
+
+    }
+
+
+    /*
+     * Create cards
+     */
+
+    data.flights.forEach(
+        flight => {
+
+            const first =
+                flight.flights[0];
+
+
+            const last =
+                flight.flights[
+                    flight.flights.length - 1
+                ];
+
+
+            const stops =
+                flight.flights.length === 1
+                    ? "Direct flight"
+                    : `${flight.flights.length - 1} stops`;
+
+
+            const segments =
+                flight.flights
+                    .map(
+                        segment => {
+
+                            return `
+                                <p>
+                                    ${segment.airline}
+                                    ${segment.flight_number}
+                                    |
+                                    ${segment.departure_airport.city}
+                                    →
+                                    ${segment.arrival_airport.city}
+                                </p>
+                            `;
+
+                        }
+                    )
+                    .join("");
+
+
+            let bookingButton = "";
+
+
+            if (
+                flight.booking_token
+            ) {
+
+                bookingButton = `
+
+                    <a
+                        href="/booking?token=${encodeURIComponent(
+                            flight.booking_token
+                        )}&departure=${encodeURIComponent(
+                            data.departure
+                        )}&arrival=${encodeURIComponent(
+                            data.arrival
+                        )}&date=${encodeURIComponent(
+                            data.date
+                        )}"
+                        target="_blank"
+                        class="details-button"
+                    >
+                        Open flight →
+                    </a>
+
+                `;
+
+            }
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "flight-card";
+
+
+            card.innerHTML = `
+
+                <div class="flight-top">
+
+                    <div class="airline">
+
+                        <h3>
+                            ${first.airline}
+                        </h3>
+
+                        <p>
+                            ${first.flight_number}
+                        </p>
+
+                    </div>
+
+
+                    <div class="price">
+
+                        $${flight.price}
+
+                    </div>
+
+                </div>
+
+
+                <div class="route">
+
+                    <div class="airport">
+
+                        <strong>
+                            ${first.departure_airport.city}
+                        </strong>
+
+                        <span>
+                            ${first.departure_airport.time}
+                        </span>
+
+                    </div>
+
+
+                    <div class="arrow">
+                        →
+                    </div>
+
+
+                    <div class="airport">
+
+                        <strong>
+                            ${last.arrival_airport.city}
+                        </strong>
+
+                        <span>
+                            ${last.arrival_airport.time}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="info">
+
+                    <span>
+                        Duration:
+                        ${flight.total_duration} min
+                    </span>
+
+                    <span>
+                        ${stops}
+                    </span>
+
+                </div>
+
+
+                <div class="segments">
+
+                    ${segments}
+
+                </div>
+
+
+                ${bookingButton}
+
+            `;
+
+
+            flightList.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+</script>
+
+
+
+</body>
+
+</html>

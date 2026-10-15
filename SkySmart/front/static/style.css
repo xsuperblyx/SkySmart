@@ -1,0 +1,923 @@
+* {
+
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Inter, Arial, sans-serif;
+
+}
+
+
+
+body {
+
+min-height:100vh;
+background:#fafafa;
+color:#111;
+
+}
+
+
+
+.background {
+
+position:absolute;
+top:0;
+left:0;
+
+width:100%;
+height:500px;
+
+background:
+radial-gradient(
+circle at top,
+#dbeafe,
+transparent 60%
+);
+
+z-index:-1;
+
+}
+
+
+
+
+
+header {
+
+height:90px;
+
+display:flex;
+align-items:center;
+
+padding:0 8%;
+
+}
+
+
+
+.logo {
+
+font-size:26px;
+font-weight:700;
+letter-spacing:-1px;
+
+}
+
+
+
+
+
+.hero {
+
+text-align:center;
+padding-top:70px;
+
+}
+
+
+
+.hero h1 {
+
+font-size:64px;
+line-height:1.05;
+letter-spacing:-3px;
+
+}
+
+
+
+.hero p {
+
+margin-top:25px;
+font-size:18px;
+color:#666;
+
+}
+
+
+
+
+
+.search-card {
+
+
+margin:60px auto 0;
+
+max-width:1100px;
+
+background:white;
+
+padding:22px;
+
+border-radius:28px;
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
+
+box-shadow:
+0 20px 60px rgba(0,0,0,.08);
+
+}
+
+
+
+
+
+.field {
+
+flex:1;
+text-align:left;
+
+}
+
+
+
+.field label {
+
+display:block;
+font-size:13px;
+color:#777;
+margin-bottom:8px;
+
+}
+
+
+
+.field input {
+
+
+width:100%;
+
+border:none;
+outline:none;
+
+background:#f6f7f9;
+
+padding:15px;
+
+border-radius:14px;
+
+font-size:16px;
+
+}
+
+
+
+
+
+.swap {
+
+
+width:40px;
+height:40px;
+
+border-radius:50%;
+
+background:#f1f5f9;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+}
+
+
+
+
+
+button {
+
+
+height:55px;
+
+padding:0 35px;
+
+border:none;
+
+border-radius:16px;
+
+background:#111827;
+
+color:white;
+
+font-size:16px;
+
+cursor:pointer;
+
+}
+
+
+
+button:hover {
+
+background:#000;
+
+}
+
+
+
+
+
+/* RESULTS */
+
+.results {
+    padding: 70px 20px;
+}
+
+.results h2 {
+    width: 100%;
+    max-width: 680px;
+    margin: 0 auto 30px;
+
+    font-size: 32px;
+}
+
+
+
+.flight-list {
+    width: 100%;
+    max-width: 1100px;
+    margin: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+
+
+
+
+.flight-card {
+    width: 100%;
+
+    background: white;
+    border-radius: 24px;
+    padding: 30px;
+
+    box-shadow:
+        0 10px 35px rgba(0,0,0,.06);
+}
+
+
+
+
+
+.flight-top {
+
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+
+}
+
+
+
+.airline h3 {
+
+font-size:22px;
+
+}
+
+
+
+.airline p {
+
+color:#777;
+margin-top:5px;
+
+}
+
+
+
+.price {
+
+
+font-size:32px;
+
+font-weight:700;
+
+color:#2563eb;
+
+}
+
+
+
+
+
+.route {
+
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+gap:60px;
+
+margin:35px 0;
+
+}
+
+
+
+
+
+.airport {
+
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+}
+
+
+
+.airport strong {
+
+
+font-size:32px;
+
+}
+
+
+
+.airport span {
+
+
+margin-top:8px;
+
+color:#666;
+
+}
+
+
+
+.arrow {
+
+
+font-size:35px;
+
+color:#999;
+
+}
+
+
+
+
+
+.info {
+
+
+display:flex;
+
+gap:30px;
+
+padding-top:20px;
+
+border-top:1px solid #eee;
+
+color:#555;
+
+}
+
+
+
+
+
+.segments {
+
+
+margin-top:20px;
+
+color:#777;
+
+font-size:14px;
+
+}
+
+
+
+
+
+/* AUTOCOMPLETE */
+
+
+.autocomplete {
+
+position:relative;
+
+}
+
+
+
+.suggestions {
+
+
+position:absolute;
+
+top:80px;
+
+left:0;
+
+right:0;
+
+background:white;
+
+border-radius:12px;
+
+overflow:hidden;
+
+z-index:10;
+
+
+box-shadow:
+0 10px 30px rgba(0,0,0,.1);
+
+
+}
+
+
+
+.suggestion {
+
+
+padding:14px;
+
+cursor:pointer;
+
+}
+
+
+
+.suggestion:hover {
+
+
+background:#f1f5f9;
+
+}
+
+
+
+
+
+@media(max-width:900px){
+
+
+.search-card,
+.route {
+
+
+flex-direction:column;
+
+}
+
+
+
+.hero h1 {
+
+font-size:42px;
+
+}
+
+
+
+}
+.details-button {
+
+
+display:inline-block;
+
+margin-top:25px;
+
+padding:14px 26px;
+
+
+background:#111827;
+
+
+color:white;
+
+
+text-decoration:none;
+
+
+border-radius:14px;
+
+
+font-size:15px;
+
+
+transition:.2s;
+
+
+}
+
+
+
+.details-button:hover {
+
+
+background:#2563eb;
+
+
+}
+/* =========================
+   AI SEARCH
+========================= */
+
+.ai-search {
+    width: 100%;
+    max-width: 1100px;
+    margin: 32px auto 0;
+}
+
+
+/* =========================
+   CHAT BOX
+========================= */
+
+.chat-box {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid #e9e9ec;
+    border-radius: 18px;
+
+    overflow: visible;
+
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.05);
+
+    transition:
+        box-shadow .25s ease,
+        border-color .25s ease;
+}
+
+
+/* =========================
+   COLLAPSED BAR
+========================= */
+
+.chat-collapsed-bar {
+    min-height: 64px;
+    padding: 0 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    cursor: pointer;
+    user-select: none;
+
+    transition:
+        background .2s ease;
+}
+
+
+.chat-collapsed-bar:hover {
+    background: #fafafa;
+}
+
+
+.chat-collapsed-text {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+/* ICON */
+
+.chat-icon {
+    width: 38px;
+    height: 38px;
+
+    flex-shrink: 0;
+
+    border-radius: 11px;
+
+    background: #f3f4f6;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 17px;
+}
+
+
+/* TEXT */
+
+.chat-collapsed-text div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    text-align: left;
+}
+
+
+.chat-collapsed-text strong {
+    font-size: 14px;
+    font-weight: 600;
+    color: #222;
+}
+
+
+.chat-collapsed-text span {
+    font-size: 12px;
+    color: #8a8a8a;
+}
+
+
+/* ARROW */
+
+.chat-expand-icon {
+    font-size: 19px;
+    color: #999;
+
+    transition:
+        transform .25s ease;
+}
+
+
+/* =========================
+   OPEN STATE
+========================= */
+
+.chat-box:not(.collapsed) {
+    box-shadow:
+        0 14px 40px rgba(0, 0, 0, 0.07);
+}
+
+
+.chat-box:not(.collapsed)
+.chat-expand-icon {
+    transform: rotate(180deg);
+}
+
+
+/* =========================
+   CHAT CONTENT
+========================= */
+
+.chat-content {
+    max-height: 330px;
+
+    opacity: 1;
+
+    overflow: visible;
+
+    transition:
+        max-height .3s ease,
+        opacity .2s ease;
+}
+
+.chat-box.collapsed .chat-content {
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+/* =========================
+   MESSAGES
+========================= */
+
+.chat-messages {
+    height: 230px;
+
+    padding: 16px 18px;
+
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+
+    background: #fafafa;
+}
+
+
+/* SCROLLBAR */
+
+.chat-messages::-webkit-scrollbar {
+    width: 5px;
+}
+
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: #d6d6d6;
+    border-radius: 10px;
+}
+
+
+/* MESSAGE */
+
+.message {
+    display: flex;
+}
+
+
+.message.bot {
+    justify-content: flex-start;
+}
+
+
+.message.user {
+    justify-content: flex-end;
+}
+
+
+/* BUBBLE */
+
+.message-bubble {
+    max-width: 72%;
+
+    padding: 9px 13px;
+
+    border-radius: 14px;
+
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+
+/* BOT */
+
+.message.bot .message-bubble {
+    background: #eeeeef;
+    color: #222;
+
+    border-bottom-left-radius: 5px;
+}
+
+
+/* USER */
+
+.message.user .message-bubble {
+    background: #111827;
+    color: white;
+
+    border-bottom-right-radius: 5px;
+}
+
+
+/* =========================
+   INPUT
+========================= */
+
+.chat-input-row {
+    display: flex;
+
+    gap: 8px;
+
+    padding: 10px;
+
+    background: white;
+
+    border-top: 1px solid #eeeeee;
+}
+
+
+.chat-input-row input {
+    flex: 1;
+
+    height: 42px;
+
+    border: none;
+    outline: none;
+
+    background: #f5f6f8;
+
+    border-radius: 11px;
+
+    padding: 0 13px;
+
+    font-size: 14px;
+
+    color: #222;
+}
+
+
+.chat-input-row input::placeholder {
+    color: #999;
+}
+
+
+/* SEND BUTTON */
+
+.chat-input-row button {
+    width: 42px;
+    height: 42px;
+
+    padding: 0;
+
+    border-radius: 11px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 17px;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 900px) {
+
+    .ai-search {
+        max-width: none;
+
+        margin-left: 20px;
+        margin-right: 20px;
+
+        width: auto;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .chat-collapsed-bar {
+        padding: 0 14px;
+    }
+
+    .chat-messages {
+        height: 210px;
+    }
+
+    .message-bubble {
+        max-width: 85%;
+    }
+
+}
+/* =========================
+   CHAT AUTOCOMPLETE
+========================= */
+
+.chat-input-row {
+    position: relative;
+}
+
+.chat-suggestions {
+    position: absolute;
+
+    top: auto;
+    bottom: calc(100% + 6px);
+
+    left: 10px;
+    right: 60px;
+
+    max-height: 150px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    background: white;
+
+    border: 1px solid #eeeeee;
+    border-radius: 11px;
+
+    z-index: 1000;
+
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, .08);
+}
+
+/* Более компактные пункты именно в чате */
+
+.chat-suggestions .suggestion {
+    padding: 9px 12px;
+
+    font-size: 13px;
+    line-height: 1.3;
+}
+
+/* Небольшой scrollbar */
+
+.chat-suggestions::-webkit-scrollbar {
+    width: 4px;
+}
+
+.chat-suggestions::-webkit-scrollbar-thumb {
+    background: #d6d6d6;
+    border-radius: 10px;
+}
